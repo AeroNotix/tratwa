@@ -1,5 +1,7 @@
 module CandidateNextIndexMap = Map.Make(Int)
 
+exception Not_implemented
+
 type server_mode =
   (* TODO: Unused (for now) | Leader *)
   | Follower
@@ -29,3 +31,5 @@ let create =
 
 let request_vote {server_mode; _} =
   assert (server_mode = Candidate)
+
+let append_entries (_t: t) (_entries: Logentry.t list) = raise Not_implemented
