@@ -1,4 +1,3 @@
 (library
  (name tratwa)
- (libraries
-   uuidm))
+ (libraries uuidm))
