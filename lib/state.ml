@@ -5,7 +5,7 @@ module PeerLogIndex = Map.Make (struct
   let compare = Candidate.compare
 end)
 
-exception Not_implemented
+(* exception Not_implemented *)
 exception Should_be_impossible
 
 type server_mode = Leader | Follower | Candidate
@@ -50,7 +50,7 @@ let request_vote = function
   | { server_mode = Candidate; _ } -> IgnoreRequestVote
   | { server_mode = Follower; voted_for = None; _ } -> AcceptRequestVote
   | { server_mode = Follower; voted_for = Some _; _ } -> IgnoreRequestVote
-  | { server_mode = Leader; _ } -> SendFollowersHeartbeats
+  | { server_mode = Leader; _ } -> BecomeFollower
 
 let append_entries (t : t) (_entries : Logentry.t list) =
   match t with
