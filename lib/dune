@@ -1,3 +1,9 @@
 (library
  (name tratwa)
- (libraries uuidm))
+ (inline_tests)
+ (preprocess
+  (pps ppx_deriving_yojson ppx_jane))
+ (libraries
+   uuidm
+   yojson
+   ppx_deriving_yojson.runtime))
