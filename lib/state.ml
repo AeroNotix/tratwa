@@ -19,6 +19,7 @@ type next_state =
   | StartElection
 
 type t = {
+    id : Candidate.t;
   mutable commit_index : int;
   mutable current_term : int;
   mutable last_applied : int;
@@ -32,6 +33,7 @@ type t = {
 (* TODO: Initialize state from persistent storage *)
 let create =
   {
+    id = Candidate.create;
     commit_index = 0;
     current_term = 0;
     last_applied = 0;
