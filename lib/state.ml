@@ -1,3 +1,11 @@
+(* TODO: Want to do something like mesh.mli where we have some
+   abstract state and this module just implements the state transition
+   logic. *)
+
+(* TODO: Perhaps instead want do something like where this module is
+   parameterized by mesh and/or connector, and has internal mutable
+   state. *)
+
 (* TODO: Should this be in the candidate module *)
 module PeerLogIndex = Map.Make (struct
   type t = Candidate.t
@@ -49,18 +57,24 @@ let is_follower { server_mode; _ } = server_mode = Follower
 let is_candidate { server_mode; _ } = server_mode = Candidate
 
 let request_vote = function
+  (* TODO: This should mutate the internal state instead of returning
+     the next intended state *)
   | { server_mode = Candidate; _ } -> IgnoreRequestVote
   | { server_mode = Follower; voted_for = None; _ } -> AcceptRequestVote
   | { server_mode = Follower; voted_for = Some _; _ } -> IgnoreRequestVote
   | { server_mode = Leader; _ } -> BecomeFollower
 
 let append_entries (t : t) (_entries : Logentry.t list) =
+  (* TODO: This should mutate the internal state instead of returning
+     the next intended state *)
   match t with
   | { server_mode = Candidate; _ } -> AcceptEntries
   | { server_mode = Follower; _ } -> AcceptEntries
   | { server_mode = Leader; _ } -> raise Should_be_impossible
 
 let heartbeat_timeout = function
+  (* TODO: This should mutate the internal state instead of returning
+     the next intended state *)
   | { server_mode = Candidate; _ } -> StartElection
   | { server_mode = Follower; _ } -> StartElection
   | { server_mode = Leader; _ } -> SendFollowersHeartbeats
