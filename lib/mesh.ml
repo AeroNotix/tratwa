@@ -3,6 +3,7 @@ module type Connector =
     type t
     val create: t
     val connect: t -> Peer.t -> unit
+    val send_rpc: t -> Rpc.t -> Peer.t -> unit
   end
 
 module type M =
