@@ -5,7 +5,7 @@ module type M =
     type nonrec t = t ref
     type mesh
 
-    val create : t
+    val create : unit -> t
     (* Stupid helpers, idk, felt useful, might delete later *)
     val is_leader : t -> bool
     val is_follower : t -> bool

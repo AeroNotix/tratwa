@@ -1,4 +1,3 @@
-
 (* TODO: Want to do something like mesh.mli where we have some
    abstract state and this module just implements the state transition
    logic. *)
@@ -36,7 +35,7 @@ module type M =
     type nonrec t = t ref
     type mesh
 
-    val create : t
+    val create : unit -> t
     (* Stupid helpers, idk, felt useful, might delete later *)
     val is_leader : t -> bool
     val is_follower : t -> bool
@@ -54,7 +53,7 @@ module Make(Mesh: Mesh.M) : M = struct
   exception Not_implemented
 
   (* TODO: Initialize state from persistent storage *)
-  let create =
+  let create () =
     ref {
       id = Candidate.create;
       commit_index = 0;
@@ -90,5 +89,4 @@ module Make(Mesh: Mesh.M) : M = struct
       Printf.printf "Candidate timeout\n"
     | ServerMode.Leader ->
       Printf.printf "Leader timeout, would send heartbeats\n"
-
 end
