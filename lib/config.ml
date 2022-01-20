@@ -11,3 +11,8 @@ type t =
 
 let of_file path =
   of_yojson ( Yojson.Safe.from_file path )
+
+let create = {
+  mesh_mode = Memory;
+  peers = [];
+}
