@@ -23,8 +23,8 @@ end
 module TestRaft = Raft.Make(TestConnector)
 
 let%test _ =
-  let a = TestRaft.create (Config.create) in
-  let b = TestRaft.create (Config.create) in
+  let a = TestRaft.create test_config in
+  let b = TestRaft.create test_config in
   (* Two rafts created by the same module are not the same reference *)
   (not (a == b) &&
    (* But they are equal *)
