@@ -1,9 +1,22 @@
+let test_config =
+  let config = Config.create in
+  (* Unit tests just use the in-memory Connector, so the peer list is
+     just a foobar list *)
+  { config with peers = (List.init 3 (fun _ -> "peer")) }
+
 module TestConnector : Raft.Connector = struct
-  type t = unit
-  let create _config = ()
+  type t = Config.t
+  type peer = State.t
   let sent_messages = ref []
-  let connect (_connector: t) (_peer: Peer.t) = ()
-  let send_rpc (_connector: t) (_rpc: Rpc.t) (peer: Peer.t) =
+
+  let create config = config
+
+  let connect (connector: t) =
+    (* In the test connector, we just create a bunch of additional states *)
+    List.init (List.length connector.peers) (fun _ -> State.create connector)
+
+  let send_rpc (_connector: t) (_rpc: Rpc.t) (peer: peer) =
+    (* In the test connector, we store each RPC being sent *)
     sent_messages := List.cons peer !sent_messages
 end
 

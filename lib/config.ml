@@ -6,7 +6,7 @@ type mode =
 type t =
   {
     mesh_mode: mode;
-    peers: Peer.t list;
+    peers: string list
   } [@@deriving yojson]
 
 let of_file path =
