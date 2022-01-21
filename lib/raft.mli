@@ -10,11 +10,23 @@ end
 module type M =
 sig
   type t
+  type connector
+  type timer
 
   val broadcast: t -> Rpc.t -> unit
   val create: Config.t -> t
   val num_connected: t -> int
   val start: t -> unit
+
+  (* Available for tests *)
+  val timer: t -> timer
+  val connector: t -> connector
+  val state: t -> State.t
 end
 
-module Make (Connector: Connector) : M
+module Make
+    (Connector: Connector)
+    (Timer: Timer.M)
+  : M
+    with type connector = Connector.t
+    with type timer = Timer.t

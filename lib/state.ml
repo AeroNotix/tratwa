@@ -12,6 +12,11 @@ exception Not_implemented
 
 module ServerMode = struct
   type t = Leader | Follower | Candidate
+  let as_string t =
+    match t with
+    | Leader -> "leader"
+    | Follower -> "follower"
+    | Candidate -> "candidate"
 end
 
 module PeerLogIndex = Map.Make (struct
@@ -60,14 +65,41 @@ let is_candidate t =
 let request_vote _t =
   raise Not_implemented
 
-let append_entries (_t : t) (_entries : Logentry.t list) =
-  raise Not_implemented
+let append_entries t entries =
+  (* TODO: I don't think these fields are correcetly mapped to what is
+     being sent in the rpc *)
+  Rpc.AppendEntries {
+    term = (!t).current_term;
+    leader_id = (!t).id;
+    prev_log_index = (!t).commit_index;
+    prev_log_term = (!t).last_applied;
+    entries;
+    leader_commit = (!t).commit_index;
+  }
+
+let become_candidate t =
+  (!t).server_mode <- ServerMode.Candidate
+
+let start_election t =
+  (!t).current_term <- succ (!t.current_term);
+  (!t).voted_for <- Some (!t).id;
+  Rpc.RequestVote {
+    term = (!t).current_term;
+    candidate_id = (!t).id;
+    last_log_index = (!t).commit_index;
+    last_log_term = (!t).last_applied;
+  }
 
 let heartbeat_timeout t =
   match (!t).server_mode with
   | ServerMode.Follower ->
-    (!t).server_mode <- ServerMode.Candidate
+    become_candidate t;
+    start_election t
   | ServerMode.Candidate ->
-    Printf.printf "Candidate timeout\n"
+    start_election t
   | ServerMode.Leader ->
-    Printf.printf "Leader timeout, would send heartbeats\n"
+    Printf.printf "Leader timeout, would send heartbeats\n";
+    append_entries t []
+
+let print_state t =
+  Printf.printf "Server State: %s\n" (ServerMode.as_string (!t).server_mode)

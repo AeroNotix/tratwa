@@ -7,7 +7,7 @@ type request_vote = {
 
 type append_entries = {
   term: int;
-  leader_id: int;
+  leader_id: Candidate.t;
   prev_log_index: int;
   prev_log_term: int;
   entries: Logentry.t list;
